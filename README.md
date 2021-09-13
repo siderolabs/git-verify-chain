@@ -7,7 +7,7 @@ $ git-verify-chain -from v0.12.0
 2021/09/13 14:41:58 OK
 
 $ git-verify-chain -from v0.10.0
-2021/09/13 14:42:04 Failed to verify commit "faecae44fde60fc626ccb01da3b221519a9d41d7":
+2021/09/13 14:42:04 failed to verify commit "faecae44fde60fc626ccb01da3b221519a9d41d7":
 git verify-commit --verbose faecae44fde60fc626ccb01da3b221519a9d41d7: exit status 1
 ```
 

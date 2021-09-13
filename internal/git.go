@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+// Package internal contains internal program logic.
 package internal
 
 import (
@@ -13,13 +14,13 @@ import (
 )
 
 // VerifyWithFiles checks that all git commits in dir in from..HEAD range are signed by *.gpg key files from pubKeysDir.
-func VerifyWithFiles(ctx context.Context, dir string, from string, pubKeysDir string) error {
+func VerifyWithFiles(ctx context.Context, dir, from, pubKeysDir string) error {
 	gpgHomeDir, err := os.MkdirTemp("", "git-verify-chain-keyring-*")
 	if err != nil {
 		return err
 	}
 
-	defer os.RemoveAll(gpgHomeDir)
+	defer os.RemoveAll(gpgHomeDir) //nolint:errcheck
 
 	files, err := filepath.Glob(filepath.Join(pubKeysDir, "*.gpg"))
 	if err != nil {
@@ -34,7 +35,7 @@ func VerifyWithFiles(ctx context.Context, dir string, from string, pubKeysDir st
 }
 
 // Verify checks that all git commits in dir in from..HEAD range are signed by keys from the GnuPG keyring in gpgHomeDir.
-func VerifyWithKeyring(ctx context.Context, dir string, from string, gpgHomeDir string) error {
+func VerifyWithKeyring(ctx context.Context, dir, from, gpgHomeDir string) error {
 	commits, err := listCommits(ctx, dir, from, "")
 	if err != nil {
 		return err
@@ -46,7 +47,7 @@ func VerifyWithKeyring(ctx context.Context, dir string, from string, gpgHomeDir 
 func listCommits(ctx context.Context, dir, from, to string) ([]string, error) {
 	cmd := exec.CommandContext(ctx, "git", "rev-list", from+".."+to)
 	cmd.Dir = dir
-	stdout, _, err := run(cmd)
+	stdout, err := run(cmd)
 
 	return stdout, err
 }
@@ -54,7 +55,6 @@ func listCommits(ctx context.Context, dir, from, to string) ([]string, error) {
 func verifyCommits(ctx context.Context, dir string, commits []string, gpgHomeDir string) error {
 	// we can pass --raw and parse output (https://github.com/gpg/gnupg/blob/master/doc/DETAILS#format-of-the-status-fd-output)
 	// if we need more details like trust levels, etc.
-
 	args := make([]string, 0, len(commits))
 	args = append(args, "verify-commit")
 	args = append(args, commits...)
@@ -65,7 +65,7 @@ func verifyCommits(ctx context.Context, dir string, commits []string, gpgHomeDir
 		"GNUPGHOME=" + gpgHomeDir,
 	}
 
-	_, _, err := run(cmd)
+	_, err := run(cmd)
 	if err == nil {
 		return nil
 	}
@@ -80,9 +80,9 @@ func verifyCommits(ctx context.Context, dir string, commits []string, gpgHomeDir
 			"GNUPGHOME=" + gpgHomeDir,
 		}
 
-		_, _, err = run(cmd)
+		_, err = run(cmd)
 		if err != nil {
-			return fmt.Errorf("Failed to verify commit %q:\n%s", commit, err)
+			return fmt.Errorf("failed to verify commit %q:\n%w", commit, err)
 		}
 	}
 

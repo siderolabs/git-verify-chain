@@ -18,11 +18,11 @@ func main() {
 	log.SetFlags(0)
 
 	var gpgHome string
-	if u, _ := user.Current(); u != nil {
+	if u, _ := user.Current(); u != nil { //nolint:errcheck
 		gpgHome = filepath.Join(u.HomeDir, ".gnupg")
 	}
 
-	fromF := flag.String("from", "", "commit or tag name to verift from")
+	fromF := flag.String("from", "", "commit or tag name to verify from")
 	keysDirF := flag.String("keys-dir", "", "directory with *.gpg files")
 	gpgHomeF := flag.String("gpg-home", gpgHome, "GnuPG home directory")
 	flag.Parse()

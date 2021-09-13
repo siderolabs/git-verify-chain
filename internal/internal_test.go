@@ -16,6 +16,8 @@ import (
 )
 
 func TestInternal(t *testing.T) {
+	t.Parallel()
+
 	gitDir := filepath.Join(os.TempDir(), "git-verify-chain")
 
 	_, err := os.Stat(gitDir)
@@ -83,6 +85,6 @@ func TestInternal(t *testing.T) {
 
 		err = VerifyWithFiles(ctx, gitDir, "v0.12.0-alpha.0", filepath.Join(wd, "testdata"))
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), `Failed to verify commit "1ed5e545385e160fe3b61e6dbbcaa8a701437b62"`)
+		assert.Contains(t, err.Error(), `failed to verify commit "1ed5e545385e160fe3b61e6dbbcaa8a701437b62"`)
 	})
 }
