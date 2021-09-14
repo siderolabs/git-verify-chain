@@ -12,7 +12,7 @@ import (
 )
 
 // runError contains all details for better error output.
-type runError struct {
+type runError struct { //nolint:govet
 	args   []string
 	stdout []string
 	stderr []string
@@ -41,25 +41,26 @@ func (e *runError) Error() string {
 	return msg
 }
 
-func run(cmd *exec.Cmd) (stdout, stderr []string, err error) {
-	var outB, errB bytes.Buffer
-
+func run(cmd *exec.Cmd) ([]string, error) {
 	if cmd.Dir == "" {
-		err = &runError{
+		err := &runError{
 			err: fmt.Errorf("exec.Cmd.Dir is empty"),
 		}
+
+		return nil, err
 	}
 
 	if cmd.Env == nil {
 		cmd.Env = []string{} // do not inherit from the parent process
 	}
 
+	var outB, errB bytes.Buffer
 	cmd.Stdout = &outB
 	cmd.Stderr = &errB
 
-	err = cmd.Run()
+	err := cmd.Run()
 
-	stdout, stderr = []string{}, []string{}
+	stdout, stderr := []string{}, []string{}
 
 	outS := strings.TrimSpace(outB.String())
 	if outS != "" {
@@ -80,5 +81,5 @@ func run(cmd *exec.Cmd) (stdout, stderr []string, err error) {
 		}
 	}
 
-	return
+	return stdout, err
 }
