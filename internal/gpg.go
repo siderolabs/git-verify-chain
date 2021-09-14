@@ -18,13 +18,14 @@ func setupKeyring(ctx context.Context, dir string, pubKeyFiles []string) error {
 			"--import",
 			file,
 		}
+
 		cmd := exec.CommandContext(ctx, "gpg", args...)
 		cmd.Dir = dir
 		cmd.Env = []string{
 			"GNUPGHOME=" + dir,
 		}
-		_, _, err := run(cmd)
 
+		_, err := run(cmd)
 		if err != nil {
 			return err
 		}
