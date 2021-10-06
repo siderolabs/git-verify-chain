@@ -1,8 +1,3 @@
-# THIS FILE WAS AUTOMATICALLY GENERATED, PLEASE DO NOT EDIT.
-#
-# Generated on 2021-09-13T18:32:36Z by kres 7412de4.
-
-
 # commit to be tagged for the new release
 commit = "HEAD"
 
@@ -10,7 +5,11 @@ project_name = "git-verify-chain"
 github_repo = "talos-systems/git-verify-chain"
 match_deps = "^github.com/(talos-systems/[a-zA-Z0-9-]+)$"
 
-# previous = -
-# pre_release = true
+previous = "v0.0.1"
+pre_release = false
 
-# [notes]
+preface = """\
+Initial release.
+"""
+
+[notes]
