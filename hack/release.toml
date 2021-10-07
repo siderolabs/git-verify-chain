@@ -5,11 +5,11 @@ project_name = "git-verify-chain"
 github_repo = "talos-systems/git-verify-chain"
 match_deps = "^github.com/(talos-systems/[a-zA-Z0-9-]+)$"
 
-previous = "v0.0.1"
+previous = "v0.1.0"
 pre_release = false
 
 preface = """\
-Initial release.
+Small fixes and improvements.
 """
 
 [notes]
