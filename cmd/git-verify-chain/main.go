@@ -23,7 +23,7 @@ func main() {
 	}
 
 	fromF := flag.String("from", "", "commit or tag name to verify from")
-	keysDirF := flag.String("keys-dir", "", "directory with *.gpg files")
+	keysDirF := flag.String("keys-dir", "", "directory with *.pgp files")
 	gpgHomeF := flag.String("gpg-home", gpgHome, "GnuPG home directory")
 	flag.Parse()
 
@@ -31,11 +31,21 @@ func main() {
 		log.Fatal("-from flag is required.")
 	}
 
-	ctx := context.Background()
-
 	var err error
 
+	*gpgHomeF, err = filepath.Abs(*gpgHomeF)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx := context.Background()
+
 	if *keysDirF != "" {
+		*keysDirF, err = filepath.Abs(*keysDirF)
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		log.Printf("Verifying using public keys from %s ...", *keysDirF)
 		err = internal.VerifyWithFiles(ctx, ".", *fromF, *keysDirF)
 	} else {

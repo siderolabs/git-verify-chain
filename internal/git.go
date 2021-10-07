@@ -13,8 +13,12 @@ import (
 	"path/filepath"
 )
 
-// VerifyWithFiles checks that all git commits in dir in from..HEAD range are signed by *.gpg key files from pubKeysDir.
+// VerifyWithFiles checks that all git commits in dir in from..HEAD range are signed by *.pgp key files from pubKeysDir.
 func VerifyWithFiles(ctx context.Context, dir, from, pubKeysDir string) error {
+	if !filepath.IsAbs(pubKeysDir) {
+		return fmt.Errorf("absolute path required")
+	}
+
 	gpgHomeDir, err := os.MkdirTemp("", "git-verify-chain-keyring-*")
 	if err != nil {
 		return err
@@ -22,7 +26,7 @@ func VerifyWithFiles(ctx context.Context, dir, from, pubKeysDir string) error {
 
 	defer os.RemoveAll(gpgHomeDir) //nolint:errcheck
 
-	files, err := filepath.Glob(filepath.Join(pubKeysDir, "*.gpg"))
+	files, err := filepath.Glob(filepath.Join(pubKeysDir, "*.pgp"))
 	if err != nil {
 		return err
 	}
@@ -36,6 +40,10 @@ func VerifyWithFiles(ctx context.Context, dir, from, pubKeysDir string) error {
 
 // VerifyWithKeyring checks that all git commits in dir in from..HEAD range are signed by keys from the GnuPG keyring in gpgHomeDir.
 func VerifyWithKeyring(ctx context.Context, dir, from, gpgHomeDir string) error {
+	if !filepath.IsAbs(gpgHomeDir) {
+		return fmt.Errorf("absolute path required")
+	}
+
 	commits, err := listCommits(ctx, dir, from, "")
 	if err != nil {
 		return err
@@ -53,6 +61,10 @@ func listCommits(ctx context.Context, dir, from, to string) ([]string, error) {
 }
 
 func verifyCommits(ctx context.Context, dir string, commits []string, gpgHomeDir string) error {
+	if len(commits) == 0 {
+		return fmt.Errorf("zero commits to verify")
+	}
+
 	// we can pass --raw and parse output (https://github.com/gpg/gnupg/blob/master/doc/DETAILS#format-of-the-status-fd-output)
 	// if we need more details like trust levels, etc.
 	args := make([]string, 0, len(commits))

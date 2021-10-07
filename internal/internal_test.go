@@ -69,7 +69,7 @@ func TestInternal(t *testing.T) {
 		t.Parallel()
 
 		dir := t.TempDir()
-		files, err := filepath.Glob(filepath.Join(wd, "testdata", "*.gpg"))
+		files, err := filepath.Glob(filepath.Join(wd, "testdata", "*.pgp"))
 		require.NoError(t, err)
 
 		err = setupKeyring(ctx, dir, files)
