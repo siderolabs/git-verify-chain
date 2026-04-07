@@ -25,6 +25,7 @@ func main() {
 	fromF := flag.String("from", "", "commit or tag name to verify from")
 	keysDirF := flag.String("keys-dir", "", "directory with *.pgp files")
 	gpgHomeF := flag.String("gpg-home", gpgHome, "GnuPG home directory")
+
 	flag.Parse()
 
 	if *fromF == "" {

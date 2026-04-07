@@ -55,6 +55,7 @@ func run(cmd *exec.Cmd) ([]string, error) {
 	}
 
 	var outB, errB bytes.Buffer
+
 	cmd.Stdout = &outB
 	cmd.Stderr = &errB
 
